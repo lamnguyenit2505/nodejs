@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const userModel = require("./model");
-const endCode = express.urlencoded();
-
 router.get('/fake', (req, res) => {
-  var newStudent = new userModel({StudentId:101, 
-    Name:"Lam Nguyen", Roll:1, Birthday:1997-10-03});
+  var newStudent = new userModel(
+  {
+    StudentId:101, 
+    Name:"Lam Nguyen", Roll:1, Birthday:1997-10-03
+  });
 
     newStudent.save(function(err, data) {
         if(err) {
@@ -47,41 +48,54 @@ router.get('/edit/:id', (req, res) => {
     });  
 })
 
-router.post('/edit', endCode, (req, res) => {
+router.post('/edit', async(req, res) => {
   var newStudent = new userModel();
-  newStudent.Name = req.body.name;
+  newStudent.Name = req.body.Name;
   newStudent.Roll = req.body.role;
   newStudent.Birthday = req.body.birthday;
+  
   if(!req.body.id) {
     newStudent.save(function(err, data){
       if(err){
         console.log(err);
       }
       else{
-       res.redirect('/user')
+        return res.json(
+          {
+            data: data
+          }
+        )
       }
    });
   } else {
-    userModel.findByIdAndUpdate(req.body.id, 
-      {Name:req.body.name}, function(err, data) {
+    await userModel.findByIdAndUpdate(req.body.id, 
+      {Name:req.body.name, Roll: req.body.roll}, function(err, data) {
           if(err){
             console.log(err);
           }
           else{
-            res.redirect('/user') 
+            return res.json(
+              {
+                data: req.body
+              }
+            ) 
           }
       });  
   }  
 })
 
-router.get('/delete/:id', endCode, (req, res) => {
+router.get('/delete/:id', (req, res) => {
   userModel.findByIdAndDelete((req.params.id), 
   function(err, data) {
     if(err){
       console.log(err);
     }
     else{
-      res.redirect('/user')
+      return res.json(
+        {
+          data: data
+        }
+      ) 
     }
   });  
 })

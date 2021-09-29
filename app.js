@@ -11,6 +11,9 @@ var corsOptions = {
   origin: "http://localhost:3001"
 };
 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 app.use('/user', cors(), user)
 app.set('views', './views')
 app.set('view engine', 'ejs');
@@ -20,8 +23,6 @@ app.use('/login', login)
 app.use(cors)
 
 app.use(cors(corsOptions));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 
 app.use(db, function(req, res) {
   console.log(res)
