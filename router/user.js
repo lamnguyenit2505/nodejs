@@ -50,12 +50,11 @@ router.get('/edit/:id', (req, res) => {
 
 router.post('/edit', async(req, res) => {
   var newStudent = new userModel();
-  newStudent.Name = req.body.Name;
-  newStudent.Roll = req.body.role;
-  newStudent.Birthday = req.body.birthday;
-  
+  newStudent.Name = req.body.name;
+  newStudent.Roll = req.body.roll;
+  newStudent.Birthday = "01-01-97";
   if(!req.body.id) {
-    newStudent.save(function(err, data){
+    await newStudent.save(function(err, data){
       if(err){
         console.log(err);
       }
@@ -68,15 +67,19 @@ router.post('/edit', async(req, res) => {
       }
    });
   } else {
-    await userModel.findByIdAndUpdate(req.body.id, 
-      {Name:req.body.name, Roll: req.body.roll}, function(err, data) {
+    await userModel.findByIdAndUpdate(
+      req.body.id, 
+      {Name:req.body.name, Roll: req.body.roll},
+      {useFindAndModify: false},
+       function(err, data) {
           if(err){
             console.log(err);
           }
           else{
+            console.log(data)
             return res.json(
               {
-                data: req.body
+                data: data
               }
             ) 
           }
